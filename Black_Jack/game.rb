@@ -61,7 +61,9 @@ class Game
     puts "#{@dealer} имеет очков: ???"
     puts "#{@player} имеет в банке: $#{@player.bank}"
     puts "#{@dealer} имеет в банке: $#{@dealer.bank}"
+    @player.make_bet
     puts "#{@player} делает ставку: $10"
+    @dealer.make_bet
     puts "#{@dealer} делает ставку: $10"
     puts '-' * 20
   end
@@ -71,15 +73,17 @@ class Game
     choice = get_player_choice
     case choice
     when '1'
-      puts 'Игрок пропускает ход.'
+      puts "#{@player} пропускает ход."
     when '2'
       card = @deck.deal_card
       @player.take_card(card)
-      puts "Игрок получает карту: #{card.display}"
+      puts "#{@player} получает карту: #{card.display}"
       puts "#{@player} имеет очков: #{points_for(@player)}"
     when '3'
       puts 'Игрок открывает карты.'
     end
+  
+    dealer_turn unless choice == '3'
   end
 
   def get_player_choice
@@ -106,7 +110,7 @@ class Game
 
   def dealer_turn
     puts "\nХод дилера #{@dealer}:"
-    if @dealer.hand_points < 17
+    if @dealer.hand_points <= 17
       card = @deck.deal_card
       @dealer.take_card(card)
       puts "Дилер получает карту: #{card.display}"
@@ -116,10 +120,14 @@ class Game
   end
 
   def dealer_finished?
-    @dealer.hand_points >= 17
+    @dealer.hand_points > 21 
   end
 
   def reveal_all_cards
+    @player.reveal_cards
+    puts "\nКарты #{@player}:"
+    @player.hand.each { |card| puts card.display }
+    puts "#{@player} имеет очков: #{points_for(@player)}"
     @dealer.reveal_cards
     puts "\nКарты дилера:"
     @dealer.hand.each { |card| puts card.display }
@@ -154,8 +162,11 @@ class Game
       @player.add_to_bank(20)
     elsif points_for(@player) < points_for(@dealer)
       @dealer.add_to_bank(20)
+    else
+      @player.add_to_bank(10)
+      @dealer.add_to_bank(10)
     end
-  end
+  end  
 
   def play_again?
     loop do

@@ -1,8 +1,8 @@
 require_relative 'player'
 
 class Dealer < Player
-  def initialize(name = 'Dealer', bank = 100)
-    super(name, bank)
+  def initialize(name = 'Dealer')
+    super(name)
   end
 
   def hide_cards

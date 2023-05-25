@@ -2,10 +2,11 @@ require_relative 'deck'
 
 class Player
   attr_reader :name, :bank, :hand
+  attr_accessor :choice
 
-  def initialize(name, bank = 100)
+  def initialize(name)
     @name = name
-    @bank = bank
+    @bank = 100
     @hand = []
   end
 
